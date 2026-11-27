@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.update
 data class ProfileUiState(
     val projects: List<ProjectUi> = emptyList(),
     val searchQuery: String = "",
+    val showOnlyFavorites: Boolean = false,
     val favoriteProjectIds: List<Int> = emptyList()
 )
 
@@ -21,11 +22,21 @@ class ProfileViewModel : ViewModel() {
     )
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
-    private fun filterProjects(searchQuery: String): List<ProjectUi> {
+    private fun filterProjects(
+        searchQuery: String,
+        showOnlyFavorites: Boolean,
+        favoriteProjectIds: List<Int>
+    ): List<ProjectUi> {
         return allProjects.filter { project ->
-            project.title.contains(searchQuery, ignoreCase = true) ||
-                project.technologies.any { technology -> technology.contains(searchQuery, ignoreCase = true) } ||
-                project.description.contains(searchQuery, ignoreCase = true)
+            val matchesSearch =
+                project.title.contains(searchQuery, ignoreCase = true) ||
+                    project.technologies.any { technology -> technology.contains(searchQuery, ignoreCase = true) } ||
+                    project.description.contains(searchQuery, ignoreCase = true)
+
+            val matchesFavorite =
+                !showOnlyFavorites || favoriteProjectIds.contains(project.id)
+
+            matchesSearch && matchesFavorite
         }
     }
 
@@ -33,7 +44,26 @@ class ProfileViewModel : ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(
                 searchQuery = newValue,
-                projects = filterProjects(newValue)
+                projects = filterProjects(
+                    searchQuery = newValue,
+                    showOnlyFavorites = currentState.showOnlyFavorites,
+                    favoriteProjectIds = currentState.favoriteProjectIds
+                )
+            )
+        }
+    }
+
+    fun onToggleFavoritesFilter() {
+        _uiState.update { currentState ->
+            val newShowOnlyFavorites = !currentState.showOnlyFavorites
+
+            currentState.copy(
+                showOnlyFavorites = newShowOnlyFavorites,
+                projects = filterProjects(
+                    searchQuery = currentState.searchQuery,
+                    showOnlyFavorites = newShowOnlyFavorites,
+                    favoriteProjectIds = currentState.favoriteProjectIds
+                )
             )
         }
     }
@@ -47,7 +77,12 @@ class ProfileViewModel : ViewModel() {
             }
 
             currentState.copy(
-                favoriteProjectIds = newFavoriteIds
+                favoriteProjectIds = newFavoriteIds,
+                projects = filterProjects(
+                    searchQuery = currentState.searchQuery,
+                    showOnlyFavorites = currentState.showOnlyFavorites,
+                    favoriteProjectIds = newFavoriteIds
+                )
             )
         }
     }

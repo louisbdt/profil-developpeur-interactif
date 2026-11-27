@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -29,6 +30,8 @@ fun ProfileScreen(
     projects: List<ProjectUi>,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
+    showOnlyFavorites: Boolean,
+    onToggleFavoritesFilter: () -> Unit,
     favoriteProjectIds: List<Int>,
     onFavoriteClick: (Int) -> Unit,
     email: String,
@@ -76,6 +79,19 @@ fun ProfileScreen(
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
+            }
+            item {
+                Button(
+                    onClick = onToggleFavoritesFilter
+                ) {
+                    Text(
+                        text = if (showOnlyFavorites) {
+                            "Afficher tous les projets"
+                        } else {
+                            "Afficher uniquement les favoris"
+                        }
+                    )
+                }
             }
             items(
                 items = projects,
@@ -125,6 +141,8 @@ fun ProfileContainer(
         projects = uiState.projects,
         searchQuery = uiState.searchQuery,
         onSearchQueryChange = viewModel::onSearchQueryChange,
+        showOnlyFavorites = uiState.showOnlyFavorites,
+        onToggleFavoritesFilter = viewModel::onToggleFavoritesFilter,
         favoriteProjectIds = uiState.favoriteProjectIds,
         onFavoriteClick = viewModel::onFavoriteClick,
         email = "contact@louisbaudat.dev",
@@ -148,6 +166,8 @@ fun ProfileScreenJuniorPreview() {
             projects = sampleProjects(),
             searchQuery = "",
             onSearchQueryChange = {},
+            showOnlyFavorites = false,
+            onToggleFavoritesFilter = {},
             favoriteProjectIds = emptyList(),
             onFavoriteClick = {},
             email = "contact@louisbaudat.dev",
@@ -172,6 +192,8 @@ fun ProfileScreenFullStackPreview() {
             projects = sampleProjects(),
             searchQuery = "",
             onSearchQueryChange = {},
+            showOnlyFavorites = false,
+            onToggleFavoritesFilter = {},
             favoriteProjectIds = listOf(1),
             onFavoriteClick = {},
             email = "contact@louisbaudat.dev",
@@ -199,6 +221,8 @@ fun ProfileScreenLightPreview() {
             projects = sampleProjects(),
             searchQuery = "",
             onSearchQueryChange = {},
+            showOnlyFavorites = false,
+            onToggleFavoritesFilter = {},
             favoriteProjectIds = emptyList(),
             onFavoriteClick = {},
             email = "contact@louisbaudat.dev",
@@ -223,9 +247,11 @@ fun ProfileScreenDarkPreview() {
             location = "Reims, France",
             description = "En alternance depuis 1 an, où je réalise des applications en C#/Angular",
             skills = listOf("C#", "Angular"),
-            projects = sampleProjects(),
+            projects = sampleProjects().filter { project -> "angular" in project.technologies.map { it.lowercase() } },
             searchQuery = "angular",
             onSearchQueryChange = {},
+            showOnlyFavorites = true,
+            onToggleFavoritesFilter = {},
             favoriteProjectIds = listOf(1, 2),
             onFavoriteClick = {},
             email = "contact@louisbaudat.dev",
