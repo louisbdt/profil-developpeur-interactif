@@ -93,6 +93,13 @@ fun ProfileScreen(
                     )
                 }
             }
+            item {
+                Text(
+                    text = "${projects.size} projet(s) affiché(s)",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
             items(
                 items = projects,
                 key = { project -> project.id }
