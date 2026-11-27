@@ -4,16 +4,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.profildeveloppeur.ui.theme.ProfilDeveloppeurTheme
 
 @Composable
@@ -24,6 +27,8 @@ fun ProfileScreen(
     description: String,
     skills: List<String>,
     projects: List<ProjectUi>,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
     email: String,
     contact: String,
     availability: String,
@@ -31,12 +36,12 @@ fun ProfileScreen(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
@@ -58,6 +63,16 @@ fun ProfileScreen(
                     text = "Projets",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
+                )
+            }
+            item {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = onSearchQueryChange,
+                    label = {
+                        Text(text = "Rechercher un projet")
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
             items(
@@ -88,22 +103,25 @@ fun ProfileScreen(
 @Composable
 fun ProfileContainer(
     onContactClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     ProfileScreen(
         name = "Louis Baudat",
         role = "Étudiant en développement web à l'ESGI",
         location = "Reims, France",
         description = "Étudiant en développement web à l'ESGI. Je m'intéresse particulièrement au développement full-stack, de Symfony/PHP/C# côté backend à React/TypeScript/Angular côté frontend.",
         skills = listOf("Symfony", "React", "TypeScript", "C#", "Angular"),
-        projects = sampleProjects(),
+        projects = uiState.projects,
+        searchQuery = uiState.searchQuery,
+        onSearchQueryChange = viewModel::onSearchQueryChange,
         email = "contact@louisbaudat.dev",
         contact = "github.com/louisbdt",
         availability = "Disponible pour une alternance",
         onContactClick = onContactClick,
         modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp)
     )
 }
 
@@ -118,13 +136,13 @@ fun ProfileScreenJuniorPreview() {
             description = "Je découvre actuellement Android et Jetpack Compose.",
             skills = listOf("Symfony", "React", "TypeScript"),
             projects = sampleProjects(),
+            searchQuery = "",
+            onSearchQueryChange = {},
             email = "contact@louisbaudat.dev",
             contact = "github.com/louisbdt",
             availability = "Disponible pour une alternance",
             onContactClick = {},
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp)
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -140,13 +158,13 @@ fun ProfileScreenFullStackPreview() {
             description = "En alternance depuis 1 an, où je réalise des applications en C#/Angular",
             skills = listOf("C#", "Angular"),
             projects = sampleProjects(),
+            searchQuery = "",
+            onSearchQueryChange = {},
             email = "contact@louisbaudat.dev",
             contact = "github.com/louisbdt",
             availability = "Disponible pour une alternance",
             onContactClick = {},
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp)
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -165,13 +183,13 @@ fun ProfileScreenLightPreview() {
             description = "En alternance depuis 1 an, où je réalise des applications en C#/Angular",
             skills = listOf("C#", "Angular"),
             projects = sampleProjects(),
+            searchQuery = "",
+            onSearchQueryChange = {},
             email = "contact@louisbaudat.dev",
             contact = "github.com/louisbdt",
             availability = "Disponible pour une alternance",
             onContactClick = {},
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp)
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -190,13 +208,13 @@ fun ProfileScreenDarkPreview() {
             description = "En alternance depuis 1 an, où je réalise des applications en C#/Angular",
             skills = listOf("C#", "Angular"),
             projects = sampleProjects(),
+            searchQuery = "angular",
+            onSearchQueryChange = {},
             email = "contact@louisbaudat.dev",
             contact = "github.com/louisbdt",
             availability = "Disponible pour une alternance",
             onContactClick = {},
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp)
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
