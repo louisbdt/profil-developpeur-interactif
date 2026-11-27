@@ -1,36 +1,45 @@
-# Profil développeur Compose — v2
+# Profil développeur interactif
 
-## Description
-Application affichant la fiche d'un développeur : avatar avec badge de disponibilité, en-tête (nom, rôle, localisation), description, liste de compétences, liste d'expériences/projets et zone de contact. Version améliorée du premier devoir, construite avec des listes modernes et un thème Material 3 clair/sombre.
+## Description de l'application
+Application affichant la fiche d'un développeur (avatar, en-tête, description, compétences) sous forme de petit portfolio interactif. L'utilisateur peut rechercher un projet par titre, technologie ou description, marquer des projets comme favoris, n'afficher que ses favoris, voir le nombre de projets actuellement visibles, et afficher/masquer les informations de contact. Un bouton permet aussi d'ouvrir le profil GitHub du développeur.
 
-## Composants Compose utilisés
-- `Text` : titres, descriptions, informations
-- `Button` : action principale ("Voir mon GitHub")
-- `Icon` : icône de localisation à côté de la ville
-- `Image` : avatar placeholder du développeur
-- `Card` : en-tête (`ProfileHeaderCard`) et chaque expérience (`ExperienceCard`)
-- `OutlinedTextField` (lecture seule) : email, lien GitHub, disponibilité
-- `Surface` : badge de disponibilité, `SkillChip`
+## États gérés par l'application
+Gérés par `ProfileViewModel` (dans `ProfileUiState`) :
+- texte de recherche (`searchQuery`)
+- filtre « favoris uniquement » (`showOnlyFavorites`)
+- identifiants des projets favoris (`favoriteProjectIds`)
+- liste des projets actuellement affichée (`projects`), recalculée à chaque action
 
-## Layouts utilisés
-- `Column` : structure verticale des cartes et sections
-- `Row` : avatar + informations côte à côte, icône + texte de localisation
-- `Box` : badge superposé sur l'avatar
-- `Spacer` : espacement entre les éléments
-- `Surface` : zones visuelles cohérentes avec le thème
+Géré localement dans un composable (hors ViewModel) :
+- visibilité des informations de contact (`showContactInfo` dans `ContactSection`)
 
-## Liste affichée avec LazyColumn / LazyRow
-- `LazyRow` pour les compétences, chacune affichée par le composable réutilisable `SkillChip`.
-- `LazyColumn` comme conteneur principal de l'écran : `item { }` pour les sections (en-tête, compétences, contact...) et `items(experiences) { }` pour afficher chaque expérience via le composable réutilisable `ExperienceCard`.
+## État local
+*Quel état avez-vous conservé directement dans un composable et pourquoi ?*
 
-## Choix de thème
-`ColorScheme` personnalisé (clair/sombre), `Shapes` arrondies et `Typography` dédiée sont définis dans `Theme.kt`/`Type.kt` et appliqués à l'ensemble de l'écran plutôt que composant par composant. Deux previews (`ProfileCardLightPreview`, `ProfileCardDarkPreview`) forcent chacun des deux thèmes pour vérifier que les couleurs restent lisibles dans les deux cas.
+La visibilité des informations de contact est gérée dans `ContactSection` avec `rememberSaveable`. C'est un détail d'affichage propre à ce composable, qui n'a pas besoin d'être connu ailleurs dans l'application.
+
+## State Hoisting
+*Pourquoi votre composable d'écran principal peut-il être considéré comme stateless ?*
+
+`ProfileScreen` ne contient aucun `remember` ni `mutableStateOf` pour son état principal : il reçoit ses données en paramètres et les actions utilisateur en callbacks. C'est `ProfileContainer` qui lui fournit cet état, en le récupérant depuis le ViewModel.
+
+## ViewModel
+*Quel est le rôle de votre ViewModel dans cette application ?*
+
+`ProfileViewModel` gère l'état principal de l'écran : il garde la liste des projets, applique la recherche et le filtre favoris, et expose des fonctions que l'UI appelle en réaction aux actions de l'utilisateur.
+
+## StateFlow
+*Comment l'interface est-elle informée lorsqu'un état change ?*
+
+Le ViewModel expose son état via un `StateFlow`. `ProfileContainer` le collecte avec `collectAsState()`, ce qui déclenche automatiquement la recomposition de l'interface à chaque nouvel état publié.
+
+## Organisation du code
+- `ProfileModels.kt` : `ProjectUi` (données d'un projet) et `sampleProjects()` (données locales)
+- `ProfileViewModel.kt` : `ProfileUiState` (état de l'écran) et `ProfileViewModel` (StateFlow, recherche, filtre, favoris)
+- `ProfileComponents.kt` : composants réutilisables (`ProfileAvatar`, `ProfileHeader`, `ProfileHeaderCard`, `SkillChip`, `SkillsRow`, `ProjectCard`, `ContactSection`, `ContactButton`)
+- `ProfileScreen.kt` : `ProfileContainer` (récupère le ViewModel, collecte le StateFlow) et `ProfileScreen` (écran stateless), ainsi que les previews
+- `MainActivity.kt` : lance l'écran et ouvre le lien GitHub via une `Intent`
 
 ## Captures d'écran
-Thème clair et thème sombre :
-
-![Preview en thème clair](screenshot/preview-light.png)
-![Preview en thème sombre](screenshot/preview-dark.png)
-
-## Notions du chapitre Compose UI réutilisées
-Composants fondamentaux (`Text`, `Button`, `Icon`, `Image`, `Card`, `OutlinedTextField`), layouts (`Column`, `Row`, `Box`, `Spacer`, `Surface`), listes modernes (`LazyRow`, `LazyColumn` avec des composables réutilisables) et Material Design 3 (`ColorScheme`, `Shapes`, `Typography`, thème clair/sombre).
+![Profil et liste des projets](screenshot/screenshot-top.png)
+![Contact et fin de liste](screenshot/screenshot-bottom.png)
