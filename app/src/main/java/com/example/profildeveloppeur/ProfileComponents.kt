@@ -1,6 +1,5 @@
 package com.example.profildeveloppeur
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -33,7 +33,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -41,10 +40,11 @@ fun ProfileAvatar(
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
-        Image(
-            painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+        Icon(
+            imageVector = Icons.Filled.AccountCircle,
             contentDescription = "Photo de profil",
-            modifier = Modifier.size(96.dp)
+            modifier = Modifier.size(96.dp),
+            tint = MaterialTheme.colorScheme.primary
         )
         Surface(
             modifier = Modifier
