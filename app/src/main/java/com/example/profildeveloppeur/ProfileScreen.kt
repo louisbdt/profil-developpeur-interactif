@@ -82,7 +82,8 @@ fun ProfileScreen(
             }
             item {
                 Button(
-                    onClick = onToggleFavoritesFilter
+                    onClick = onToggleFavoritesFilter,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = if (showOnlyFavorites) {
@@ -143,7 +144,7 @@ fun ProfileContainer(
         name = "Louis Baudat",
         role = "Étudiant en développement web à l'ESGI",
         location = "Reims, France",
-        description = "Étudiant en développement web à l'ESGI. Je m'intéresse particulièrement au développement full-stack, de Symfony/PHP/C# côté backend à React/TypeScript/Angular côté frontend.",
+        description = "Étudiant en développement web à l'ESGI, orienté full-stack (Symfony, React, C#, Angular).",
         skills = listOf("Symfony", "React", "TypeScript", "C#", "Angular"),
         projects = uiState.projects,
         searchQuery = uiState.searchQuery,

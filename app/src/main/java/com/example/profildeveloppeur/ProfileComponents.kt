@@ -246,7 +246,8 @@ fun ContactSection(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Button(
-            onClick = { showContactInfo = !showContactInfo }
+            onClick = { showContactInfo = !showContactInfo },
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = if (showContactInfo) {
