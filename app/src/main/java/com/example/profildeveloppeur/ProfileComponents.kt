@@ -27,6 +27,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -232,6 +236,8 @@ fun ContactSection(
     availability: String,
     modifier: Modifier = Modifier
 ) {
+    var showContactInfo by rememberSaveable { mutableStateOf(false) }
+
     Column(modifier = modifier) {
         Text(
             text = "Contact",
@@ -239,29 +245,43 @@ fun ContactSection(
             color = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = email,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(text = "Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = githubLink,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(text = "GitHub") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = availability,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(text = "Disponibilité") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        Button(
+            onClick = { showContactInfo = !showContactInfo }
+        ) {
+            Text(
+                text = if (showContactInfo) {
+                    "Masquer les informations de contact"
+                } else {
+                    "Afficher les informations de contact"
+                }
+            )
+        }
+        if (showContactInfo) {
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = email,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text(text = "Email") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = githubLink,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text(text = "GitHub") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = availability,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text(text = "Disponibilité") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
