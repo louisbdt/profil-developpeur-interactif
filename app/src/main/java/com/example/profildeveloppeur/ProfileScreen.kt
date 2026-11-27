@@ -29,6 +29,8 @@ fun ProfileScreen(
     projects: List<ProjectUi>,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
+    favoriteProjectIds: List<Int>,
+    onFavoriteClick: (Int) -> Unit,
     email: String,
     contact: String,
     availability: String,
@@ -79,7 +81,13 @@ fun ProfileScreen(
                 items = projects,
                 key = { project -> project.id }
             ) { project ->
-                ProjectCard(project = project)
+                ProjectCard(
+                    project = project,
+                    isFavorite = favoriteProjectIds.contains(project.id),
+                    onFavoriteClick = {
+                        onFavoriteClick(project.id)
+                    }
+                )
             }
             item {
                 ContactSection(
@@ -117,6 +125,8 @@ fun ProfileContainer(
         projects = uiState.projects,
         searchQuery = uiState.searchQuery,
         onSearchQueryChange = viewModel::onSearchQueryChange,
+        favoriteProjectIds = uiState.favoriteProjectIds,
+        onFavoriteClick = viewModel::onFavoriteClick,
         email = "contact@louisbaudat.dev",
         contact = "github.com/louisbdt",
         availability = "Disponible pour une alternance",
@@ -138,6 +148,8 @@ fun ProfileScreenJuniorPreview() {
             projects = sampleProjects(),
             searchQuery = "",
             onSearchQueryChange = {},
+            favoriteProjectIds = emptyList(),
+            onFavoriteClick = {},
             email = "contact@louisbaudat.dev",
             contact = "github.com/louisbdt",
             availability = "Disponible pour une alternance",
@@ -160,6 +172,8 @@ fun ProfileScreenFullStackPreview() {
             projects = sampleProjects(),
             searchQuery = "",
             onSearchQueryChange = {},
+            favoriteProjectIds = listOf(1),
+            onFavoriteClick = {},
             email = "contact@louisbaudat.dev",
             contact = "github.com/louisbdt",
             availability = "Disponible pour une alternance",
@@ -185,6 +199,8 @@ fun ProfileScreenLightPreview() {
             projects = sampleProjects(),
             searchQuery = "",
             onSearchQueryChange = {},
+            favoriteProjectIds = emptyList(),
+            onFavoriteClick = {},
             email = "contact@louisbaudat.dev",
             contact = "github.com/louisbdt",
             availability = "Disponible pour une alternance",
@@ -210,6 +226,8 @@ fun ProfileScreenDarkPreview() {
             projects = sampleProjects(),
             searchQuery = "angular",
             onSearchQueryChange = {},
+            favoriteProjectIds = listOf(1, 2),
+            onFavoriteClick = {},
             email = "contact@louisbaudat.dev",
             contact = "github.com/louisbdt",
             availability = "Disponible pour une alternance",
